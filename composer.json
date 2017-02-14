@@ -1,0 +1,24 @@
+{
+    "name": "donkeyworks/roast",
+    "description": "",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org/"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "4.8.23"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DonkeyWorks\\Roast\\Test\\": "tests"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "DonkeyWorks\\Roast\\": "src"
+        }
+    }
+}
