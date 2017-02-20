@@ -12,18 +12,6 @@ use \DonkeyWorks\Roast\Message;
  */
 class AbstractResultTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCreateMessage()
-    {
-        // Act
-        $message = AbstractResult::createMessage("Lorem ipsum", 1, "dolor");
-
-        // Assert
-        $this->assertTrue($message instanceof Message);
-        $this->assertEquals("Lorem ipsum", $message->getMessage());
-        $this->assertEquals(1, $message->getCode());
-        $this->assertEquals("dolor", $message->getField());
-    }
-
     /**
      * Test setting valid data and getting it afterwards
      *

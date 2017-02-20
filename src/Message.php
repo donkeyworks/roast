@@ -8,7 +8,7 @@ namespace DonkeyWorks\Roast;
  * @see \DonkeyWorks\Roast\MessageInterface
  * @author sbouw
  */
-class Message implements MessageInterface
+class Message implements MessageInterface, ExportableInterface
 {
     /**
      * @var string Message string
@@ -101,5 +101,25 @@ class Message implements MessageInterface
     public function getField()
     {
         return $this->field;
+    }
+
+    /**
+     * @see \Result\ExportableInterface::export
+     */
+    public function export()
+    {
+        $export = [
+            "message" => $this->getMessage()
+        ];
+
+        if ($this->getCode()) {
+            $export["code"] = $this->getCode();
+        }
+
+        if ($this->getField()) {
+            $export["field"] = $this->getField();
+        }
+
+        return (object) $export;
     }
 }

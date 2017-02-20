@@ -3,7 +3,7 @@
 namespace DonkeyWorks\Roast\Test;
 
 use DonkeyWorks\Roast\JsonResult;
-use DonkeyWorks\Roast\JsonMessage;
+use DonkeyWorks\Roast\Message;
 
 /**
  * @group result
@@ -12,19 +12,6 @@ use DonkeyWorks\Roast\JsonMessage;
  */
 class JsonResultTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function testCreateMessage()
-    {
-        // Act
-        $message = JsonResult::createMessage("Lorem ipsum", 1, "dolor");
-
-        // Assert
-        $this->assertTrue($message instanceof JsonMessage);
-        $this->assertEquals("Lorem ipsum", $message->getMessage());
-        $this->assertEquals(1, $message->getCode());
-        $this->assertEquals("dolor", $message->getField());
-    }
-
     /**
      * Test setting valid json options and getting them afterwards
      *
@@ -176,25 +163,25 @@ class JsonResultTest extends \PHPUnit_Framework_TestCase
             [
                 "setStatusSuccess",
                 (object) ["lorem" => "ipsum"],
-                [new JsonMessage("Dolor sit amet")],
+                [new Message("Dolor sit amet")],
                 json_encode((object) ["status" => "success", "data" => (object)["lorem" => "ipsum"]])
             ],
             [
                 "setStatusFail",
                 (object) ["lorem" => "ipsum"],
-                [new JsonMessage("Dolor sit amet")],
+                [new Message("Dolor sit amet")],
                 json_encode((object) ["status" => "fail", "data" => [(object)["message" => "Dolor sit amet"]]])
             ],
             [
                 "setStatusError",
                 (object) ["lorem" => "ipsum"],
-                [new JsonMessage("Dolor sit amet")],
+                [new Message("Dolor sit amet")],
                 json_encode((object) ["status" => "error", "data" => [(object)["message" => "Dolor sit amet"]]])
             ],
             [
                 "setStatusError",
                 (object) ["lorem" => "ipsum"],
-                [new JsonMessage("Dolor sit amet"), new JsonMessage("Adipiscing")],
+                [new Message("Dolor sit amet"), new Message("Adipiscing")],
                 json_encode((object) ["status" => "error", "data" => [(object)["message" => "Dolor sit amet"], (object)["message" => "Adipiscing"]]])
             ],
         ];

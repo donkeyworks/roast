@@ -64,23 +64,9 @@ class JsonResult extends AbstractResult
     /**
      * @see \DonkeyWorks\Roast\AbstractResult::serializeResult
      */
-    protected function serializeResult()
+    protected function serializeResult(\stdClass $resultData)
     {
-        $result = new \stdClass();
-
-        if (is_null($this->status)) {
-            throw new \Exception("Invalid empty status. Set a valid status on the result object before serializing.");
-        }
-
-        $result->status = $this->status;
-
-        if ($this->hasTrouble()) {
-            $result->data = $this->messages;
-        } else {
-            $result->data = $this->data;
-        }
-
-        $serializedResult = json_encode($result, $this->jsonOptions);
+        $serializedResult = json_encode($resultData, $this->jsonOptions);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception("An error occurred while serializing JsonResult: " . json_last_error_msg(), json_last_error());

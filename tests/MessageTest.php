@@ -84,4 +84,41 @@ class MessageTest extends \PHPUnit_Framework_TestCase
             ["Lorem ipsum", 1, []]
         ];
     }
+
+    /**
+     * Test export
+     *
+     * @dataProvider exportProvider
+     *
+     * @param string $message
+     * @param int|null $code
+     * @param string|null $field
+     * @param array $expectedResult
+     * @return void
+     */
+    public function testJsonSerialize($message, $code, $field, $expectedResult)
+    {
+        // Act
+        $result = new Message($message, $code, $field);
+
+        // Assert
+        $this->assertEquals($expectedResult, $result->export());
+    }
+
+    // Data providers
+
+    /**
+     * Provide data for export tests
+     *
+     * @return array
+     */
+    public function exportProvider()
+    {
+        return [
+            ["Lorem ipsum", null, null, (object) ["message" => "Lorem ipsum"]],
+            ["Lorem ipsum", 1, null, (object) ["message" => "Lorem ipsum", "code" => 1]],
+            ["Lorem ipsum", null, "dolor", (object) ["message" => "Lorem ipsum", "field" => "dolor"]],
+            ["Lorem ipsum", 1, "dolor", (object) ["message" => "Lorem ipsum", "code" => 1, "field" => "dolor"]]
+        ];
+    }
 }

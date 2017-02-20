@@ -41,21 +41,6 @@ abstract class AbstractResult implements ResultInterface
     protected $messages = [];
 
     /**
-     * Proxy to instation of message instance
-     *
-     * TODO: Should be abstract once we drop support for PHP < 7.0
-     *
-     * @param string $message
-     * @param int|float|string|null $code
-     * @param string|null $field
-     * @return MessageInterface
-     */
-    public static function createMessage($message, $code = null, $field = null)
-    {
-        return new Message($message, $code, $field);
-    }
-
-    /**
      * @see \DonkeyWorks\Roast\ResultInterface::setData
      */
     public function setData($data)
@@ -184,7 +169,7 @@ abstract class AbstractResult implements ResultInterface
         $result = '';
 
         try {
-            $result = $this->serializeResult();
+            $result = $this->serializeResult($this->export());
         } catch (\Exception $e) {
             // Something went wrong while serializing, serialize the exception and asign that to the result instead
             $result = $this->serializeException($e);
@@ -194,12 +179,45 @@ abstract class AbstractResult implements ResultInterface
     }
 
     /**
+     * Get a representation of the result which is ready to be serialized
+     *
+     * Checks internal state for invariant exceptions
+     * Replaces data with messages on trouble
+     * Exports the data if the class implements the ExportableInterface
+     *
+     * @throws \Exception
+     * @return \stdClass
+     */
+    protected function export()
+    {
+        $result = new \stdClass();
+
+        if (is_null($this->status)) {
+            throw new \Exception("Invalid empty status. Set a valid status on the result object before serializing.");
+        }
+
+        $result->status = $this->status;
+
+        if ($this->hasTrouble()) {
+            $result->data = [];
+            foreach ($this->messages as $message) {
+                $result->data[] = ($message instanceof ExportableInterface) ? $message->export() : $message;
+            }
+        } else {
+            $result->data = ($this->data instanceof ExportableInterface) ? $this->data->export() : $this->data;
+        }
+
+        return $result;
+    }
+
+    /**
      * Primitive result serialization operation
      *
      * @throws \Exception Serialization exception
+     * @param \stdClass $resultData Exported result data, ready for serialization
      * @return string Serialized result object
      */
-    abstract protected function serializeResult();
+    abstract protected function serializeResult(\stdClass $resultData);
 
     /**
      * Primitive exception serialization operation
