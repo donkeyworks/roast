@@ -176,7 +176,7 @@ The serializeResult method receives an stdClass of the proper structure to adher
 
 #### serializeException
 
-The serializeException method gets called when serialization throws an exception. This allows for the output to always be consistent and not suddenly return an "uncaught exception" message to the client in an unexpected format. The serializeException message receives the throwed exception so you can construct a descent error message for the consuming client. Make sure the serializeException method always returns a string if the proper format, that is, adhering to the jsend extend specification. See the JsonResult class for an example implementation.
+The serializeException method gets called when serialization throws an exception. This allows for the output to always be consistent and not suddenly return an "uncaught exception" message to the client in an unexpected format. The serializeException message receives the throwed exception so you can construct a descent error message for the consuming client. Make sure the serializeException method always returns a string of the proper format (that is, adhering to the jsend extend specification). See the JsonResult class for an example implementation.
 
 ### JsonResult
 
@@ -188,4 +188,16 @@ Upon initialization or with the `setJsonOptions` method the json options for jso
 
 ## Messages
 
+When something goes wrong with your operation, e.g. an exception was thrown or some validation failed, you can add messages to the result object to render a consistent response to the client.
+
+Roast ships with a default message class that adheres to the "message" specification of jsend extend.
+
+Messages will only be shown once the status of the result object is set to "fail" or "error".
+
+Please see the examples under "result status codes" in this document.
+
 ## Custom data formatting
+
+Sometimes you might want to give the result object an object as its data that does not "serialize" well. Think of an object with private properties and public getters. In these cases you can let the "data object" implement the `DonkeyWorks\Roast\ExportableInterface`. This interface defines one export method that allows you to transform your object to the proper format for serialization. 
+
+If an object implements the ExportableInterface the export method will be called to obtain its data upon serialization.
