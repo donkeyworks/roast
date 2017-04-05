@@ -20,7 +20,7 @@ composer require donkeyworks/roast
 
 ## Usage
 
-The following is a usage example of Roast formatting a result data from an operation a Json combined with symfony's HttpFoundation to send the formatted result to the client:
+The following is a usage example of Roast formatting a result data from an operation as Json, combined with symfony's HttpFoundation to send the formatted result to the client:
 
 ```
 use DonkeyWorks\Roast\JsonResult;
@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 $result = new JsonResult();
 
-// Do something that generates a result
+// Do something that generates some data that should be send to the client
 try {
     $data = $myService->doSomething();
 
@@ -50,10 +50,112 @@ $response->headers->set('Content-Type', 'application/json');
 // Serialize the JsonResult for consistently formatted response data adhering to jsend-extend specs wether
 // it is regular data resulting from the operation or an error message
 $response->setContent($result->serialize());
+
+$response->send(); // Send the response to the client
 ```
 
-## Custom data formatting
+## Result status codes
 
-## Error messages
+Jsend-extend defines three types of statuses: success, fail and error
+
+### Success
+The success state is, obviously, for successful responses. These responses will normally be sent with a 200 HTTP status code.
+
+Roast's result objects default to the success state, but also define a `setStatusSuccess` method to manually set the status of the result object to "success".
+
+The following is an example of a Roast result object with the status set to success, serialized as json: 
+
+```
+{
+    "status": "success",
+    "data": "Some data, could be an object, an array or anything really, like this string"
+}
+```
+The above response would be achieved with the following code:
+```
+use DonkeyWorks\Roast\JsonResult;
+use Symfony\Component\HttpFoundation\Response;
+
+$result = new JsonResult();
+$result->setData("Some data, could be an object, an array or anything really, like this string");
+
+$response = new Response();
+$response->headers->set('Content-Type', 'application/json');
+$response->setContent($result->serialize());
+$response->send();
+```
+### Fail
+The "fail" state is for failed operations, generally because some check on an input parameter failed. These responses will mostly be sent with a 400 HTTP status code. E.g. if a request was made for a specific resource but an invalid resource id was passed, this could result in the following "fail" response:
+```
+{
+    "status": "fail",
+    "data": [
+        {
+            "message": "Unable to retrieve resource, invalid id passed.",
+            "code": 1,
+            "field": "resource-id"
+        }
+    ]
+}
+```
+The above response would be achieved with the following code:
+```
+use DonkeyWorks\Roast\JsonResult;
+use Symfony\Component\HttpFoundation\Response;
+use DonkeyWorks\Roast\Message;
+
+$result = new JsonResult();
+$result->setStatusFail();
+$result->addMessage(
+    new Message("Unable to retrieve resource, invalid id passed.", 1, "resource-id")
+);
+
+$response = new Response();
+$response->headers->set('Content-Type', 'application/json');
+$response->setStatusCode(Response::HTTP_BAD_REQUEST);
+$response->setContent($result->serialize());
+$response->send();
+```
+The code and field properties of the message object are optional. The second and third parameter of the Message's constructor can therefore be left empty. Multiple messages can be added to the result object if e.g. multiple input checks failed.
+
+### Error
+The "error" state is for operations where an error occured while processing the request. E.g. an exception was thrown. These responses will normally be sent with a 500 HTTP status code. E.g. if an operation depends on an external webservice and that webservice is down this could result in the following "error" response:
+
+```
+{
+    "status": "error",
+    "data": [
+        {
+            "message": "An exception occured while processing your request. Timeout while trying to connect to external webservice."
+        }
+    ]
+}
+```
+The above response would be achieved with the following code:
+```
+use DonkeyWorks\Roast\JsonResult;
+use Symfony\Component\HttpFoundation\Response;
+use DonkeyWorks\Roast\Message;
+
+$result = new JsonResult();
+try {
+    throw new \Exception("Timeout while trying to connect to external webservice.");
+} catch (\Exception $e) {
+    $result->setStatusError();
+    $result->addMessage(
+        new Message("An exception occured while processing your request. " . $e->getMessage())
+    );
+}
+
+$response = new Response();
+$response->headers->set('Content-Type', 'application/json');
+$response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+$response->setContent($result->serialize());
+$response->send();
+```
+
+## JsonResult
 
 ## Creating your own result object type
+
+## Messages
