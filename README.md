@@ -154,8 +154,38 @@ $response->setContent($result->serialize());
 $response->send();
 ```
 
-## JsonResult
+## Result object types
 
-## Creating your own result object type
+Altough most frequently used, the extended jsend specification is not limited to Json. The specification could also be used to format data returned by an XML-RPC webservice or for that matter any future standard that may arise. Who knows, you might want to return data as yaml. The specification allows you to structure your data consistantly across requests, but does not limit you in the type of response you want to send. Therefore Roast does not limit you either.
+
+Roast's structure consists of "result objects" for specific response "types", like Json or XML. These "result objects" define a serialize method that serializes the data it holds to the proper "type". In the case of a Json "result object" this means calling PHP's native "json_encode" method to serialize the data. 
+
+Since Json is the most used reponse format for webservices, Roast ships with a "result object type" that offers een implementation of serialization to Json. But it is trivial to add your own implementation for, say, XML.
+
+See the basic usage example and the examples in the section "status code" on how to use the "result objects". These examples use the JsonResult object but apply to any type of result object, just instantiate the right type.
+
+### Creating your own result object type
+
+Creating a "result object type", e.g. for XML basically means you have to implement the `Donkeyworks\Roast\ResultInterface`. But to help you out a little bit and make a solid implementation easier we added an abstract class that you can extend and does most of the plumbing for you: `Donkeyworks\Roast\AbstractResult`.
+
+By implementing the two abstract methods "serializeResult" and "serializeException" you can create your own "result object type" in a jiffy.
+
+#### serializeResult
+
+The serializeResult method receives an stdClass of the proper structure to adhere to the extended jsend specification. All you have to do is convert it to a string. See the JsonResult class for an example implementation. Off course something could go wrong while serializing, if that happens, throw an Exception, that will trigger the serializeException method.
+
+#### serializeException
+
+The serializeException method gets called when serialization throws an exception. This allows for the output to always be consistent and not suddenly return an "uncaught exception" message to the client in an unexpected format. The serializeException message receives the throwed exception so you can construct a descent error message for the consuming client. Make sure the serializeException method always returns a string if the proper format, that is, adhering to the jsend extend specification. See the JsonResult class for an example implementation.
+
+### JsonResult
+
+Roast ships with the JsonResult class as an implementation of the "json result object type".
+
+By setting data or messages onto an instance of the JsonResult class one can add "data" to the result. After adding data and setting the proper status call the "serialize" method of the JsonResult instance to receive a valid json string which can be send to the client
+
+Upon initialization or with the `setJsonOptions` method the json options for json_encode can be set. See http://php.net/manual/en/function.json-encode.php for more info on the available options.
 
 ## Messages
+
+## Custom data formatting
