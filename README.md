@@ -20,9 +20,9 @@ composer require donkeyworks/roast
 
 ## Usage
 
-The following is a usage example of Roast formatting a result data from an operation as Json, combined with symfony's HttpFoundation to send the formatted result to the client:
+The following is a usage example of Roast formatting result data from an operation as Json, combined with symfony's HttpFoundation to send the formatted result to the client:
 
-```
+```php
 use DonkeyWorks\Roast\JsonResult;
 use DonkeyWorks\Roast\Message;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +36,8 @@ try {
     // Assign the data to the JsonResult
     $result->setData($data);
 } catch (\Exception $e) {
-    // If the doSomething method failed add an error message to the JsonResult
-    $result->setStatusFail();
+    // If the doSomething method throwed an exception, add an error message to the JsonResult
+    $result->setStatusError();
     $result->addMessage(
         new Message("Unable to 'doSomething'. " . $e->getMessage());
     );
@@ -53,7 +53,6 @@ $response->setContent($result->serialize());
 
 $response->send(); // Send the response to the client
 ```
-
 ## Result status codes
 
 Jsend-extend defines three types of statuses: success, fail and error
@@ -65,14 +64,14 @@ Roast's result objects default to the success state, but also define a `setStatu
 
 The following is an example of a Roast result object with the status set to success, serialized as json: 
 
-```
+```javascript
 {
     "status": "success",
     "data": "Some data, could be an object, an array or anything really, like this string"
 }
 ```
 The above response would be achieved with the following code:
-```
+```php
 use DonkeyWorks\Roast\JsonResult;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -86,7 +85,7 @@ $response->send();
 ```
 ### Fail
 The "fail" state is for failed operations, generally because some check on an input parameter failed. These responses will mostly be sent with a 400 HTTP status code. E.g. if a request was made for a specific resource but an invalid resource id was passed, this could result in the following "fail" response:
-```
+```javascript
 {
     "status": "fail",
     "data": [
@@ -99,7 +98,7 @@ The "fail" state is for failed operations, generally because some check on an in
 }
 ```
 The above response would be achieved with the following code:
-```
+```php
 use DonkeyWorks\Roast\JsonResult;
 use Symfony\Component\HttpFoundation\Response;
 use DonkeyWorks\Roast\Message;
@@ -121,7 +120,7 @@ The code and field properties of the message object are optional. The second and
 ### Error
 The "error" state is for operations where an error occured while processing the request. E.g. an exception was thrown. These responses will normally be sent with a 500 HTTP status code. E.g. if an operation depends on an external webservice and that webservice is down this could result in the following "error" response:
 
-```
+```javascript
 {
     "status": "error",
     "data": [
@@ -132,7 +131,7 @@ The "error" state is for operations where an error occured while processing the 
 }
 ```
 The above response would be achieved with the following code:
-```
+```php
 use DonkeyWorks\Roast\JsonResult;
 use Symfony\Component\HttpFoundation\Response;
 use DonkeyWorks\Roast\Message;
