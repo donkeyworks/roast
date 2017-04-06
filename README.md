@@ -100,8 +100,8 @@ The "fail" state is for failed operations, generally because some check on an in
 The above response would be achieved with the following code:
 ```php
 use DonkeyWorks\Roast\JsonResult;
-use Symfony\Component\HttpFoundation\Response;
 use DonkeyWorks\Roast\Message;
+use Symfony\Component\HttpFoundation\Response;
 
 $result = new JsonResult();
 $result->setStatusFail();
@@ -133,8 +133,8 @@ The "error" state is for operations where an error occured while processing the 
 The above response would be achieved with the following code:
 ```php
 use DonkeyWorks\Roast\JsonResult;
-use Symfony\Component\HttpFoundation\Response;
 use DonkeyWorks\Roast\Message;
+use Symfony\Component\HttpFoundation\Response;
 
 $result = new JsonResult();
 try {
