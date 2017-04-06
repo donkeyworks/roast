@@ -16,14 +16,6 @@ class JsonResult extends AbstractResult
     private $jsonOptions;
 
     /**
-     * @see AbstractResult::createMessage
-     */
-    public static function createMessage($message, $code = null, $field = null)
-    {
-        return new JsonMessage($message, $code, $field);
-    }
-
-    /**
      * @param int $jsonOptions Json_encode options param, see http://php.net/manual/en/function.json-encode.php
      */
     public function __construct($jsonOptions = 0)
