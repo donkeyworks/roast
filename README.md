@@ -4,7 +4,7 @@
 
 Donkeyworks Roast is a PHP library enabling consistent response formatting for AJAX requests based on an extended version of the JSend schema (https://github.com/rolfvreijdenberger/json-response-schema).
 
-Roast allows for easy creation of a consistent result object of any type which can be serialized for transmission over HTTP. This means that Roast does not handle the transmission for you, other packages, like symfony's HttpFoundation are better equiped for that job. Roast just handles the formatting of the data itself.
+This repository contains a reference to json-schemas that extend the jsend schema so you can adhere to a standard for structured json responses for applications, focusing specifically on structuring response data in a consistent format as an application-level standard. As such, Roast allows for easy creation of a consistent result object of any type which can be serialized for transmission over HTTP. This means that Roast does not handle the transmission for you, other packages, like symfony's HttpFoundation are better equiped for that job. Roast just handles the structuring of the response data itself.
 
 Currently Roast ships with one type of result object: JsonResult. But Roast can be easily extended to create your own type of result object if the JsonResult object does not suit your needs.
 
